@@ -1,43 +1,31 @@
 package com.example.tmdb
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.tmdb.ui.theme.TmdbTheme
+import androidx.annotation.RequiresApi
+import androidx.lifecycle.ViewModelProvider
+import com.example.tmdb.modules.FavoritesViewModel
+import com.example.tmdb.modules.HomeViewModel
+
 
 class MainActivity : ComponentActivity() {
+
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            TmdbTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Greeting("Android")
-                }
-            }
+
+            val homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+            val favoritesViewModel = ViewModelProvider(this).get(FavoritesViewModel::class.java)
+
+
+
+            MainScreen(homeViewModel, favoritesViewModel)
+
+
+
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    TmdbTheme {
-        Greeting("Android")
     }
 }

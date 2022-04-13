@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Tmdb</string>
+    <string name="home_first_cathegory">What\'s popular</string>
 </resources>
