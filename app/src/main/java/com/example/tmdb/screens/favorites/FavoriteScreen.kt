@@ -103,6 +103,6 @@ fun FavoriteScreen (logo : Painter, modifier: Modifier = Modifier,
             }
         }
     } else {
-        DetailPage().DetailPage(visible)
+        DetailPage(visible)
     }
 }

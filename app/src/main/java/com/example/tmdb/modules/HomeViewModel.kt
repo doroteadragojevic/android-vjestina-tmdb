@@ -2,7 +2,7 @@ package com.example.tmdb.modules
 
 import androidx.lifecycle.ViewModel
 
-public class HomeViewModel(
+class HomeViewModel(
 
 ): ViewModel() {
     val popularList = MovieRepositoryImpl(movieApi = MovieApiImpl()).getPopularMovies()

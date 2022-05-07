@@ -15,10 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.example.tmdb.modules.FavoritesViewModel
 import com.example.tmdb.modules.HomeViewModel
 import com.example.tmdb.screens.detail.DetailPage
-import com.example.tmdb.screens.home.HomeScreenElements
-import com.example.tmdb.screens.home.MovieCard
-import com.example.tmdb.screens.home.SearchCard
-import com.example.tmdb.screens.home.Tabs
+import com.example.tmdb.screens.home.*
 
 @Composable
 fun HomeScreen(logo : Painter,
@@ -47,11 +44,11 @@ if((visible.value == true) ) {
         LazyColumn {
 
             item {
-                HomeScreenElements().Search(searching, searchingCards)
+                Search(searching, searchingCards)
             }
             if((searching.value == false)) {
                 item {
-                    HomeScreenElements().Cathegory(stringResource(id = R.string.home_first_cathegory))//str = "What's popular")
+                    Cathegory(stringResource(id = R.string.home_first_cathegory))//str = "What's popular")
                 }
                 item {
                     Box(
@@ -94,7 +91,7 @@ if((visible.value == true) ) {
                         }
                     }
                     item {
-                        HomeScreenElements().Cathegory(str = "Now Playing")
+                        Cathegory(str = "Now Playing")
 
                     }
                     item {
@@ -111,7 +108,7 @@ if((visible.value == true) ) {
                         }
                     }
                     item {
-                        HomeScreenElements().Cathegory(str = "Upcoming")
+                        Cathegory(str = "Upcoming")
                     }
                     item {
                         LazyRow {
@@ -158,6 +155,6 @@ if((visible.value == true) ) {
             }
         }
     } else if(visible.value == false){
-        DetailPage().DetailPage(visible)
+        DetailPage(visible)
     }
 }

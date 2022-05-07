@@ -38,7 +38,8 @@ fun DetailPageCard(){
 
         )
         Box(modifier = Modifier
-            .fillMaxSize()
+            .height(400.dp)
+            .fillMaxWidth()
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
@@ -60,7 +61,7 @@ fun DetailPageCard(){
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
                 fontSize = 25.sp,
-                modifier = Modifier.padding(top = 60.dp)
+                modifier = Modifier.padding(top = 63.dp)
 
             )
             Box(modifier = Modifier
@@ -92,7 +93,6 @@ fun DetailPageCard(){
 
 @Composable
 fun UserScore(){
-    Row {
         Card(
             backgroundColor = Color.Transparent
         ) {
@@ -118,11 +118,10 @@ fun UserScore(){
             text = "User Score",
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .padding(10.dp, 15.dp),
+                .padding(0.dp, 45.dp),
             color = Color.White,
             fontSize = 17.sp
         )
-    }
 }
 
 @Composable

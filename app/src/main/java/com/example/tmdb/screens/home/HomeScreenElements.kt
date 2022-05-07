@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.tmdb.R
 
-class HomeScreenElements() {
+
     @Composable
     fun Search(searching: MutableState<Boolean>, searchingCards: MutableState<Boolean>)
     {
@@ -150,7 +150,7 @@ class HomeScreenElements() {
         }
 
     }
-}
+
 
 @Composable
 fun SearchCard(painter : Painter, name : String, visible : MutableState<Boolean>){

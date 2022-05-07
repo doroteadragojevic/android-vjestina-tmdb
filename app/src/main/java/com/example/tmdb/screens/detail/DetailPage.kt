@@ -4,6 +4,8 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -15,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import com.example.tmdb.R
 
 
-class DetailPage{
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
 fun DetailPage(visible : MutableState<Boolean>){
@@ -26,21 +27,12 @@ fun DetailPage(visible : MutableState<Boolean>){
     }
 
     ){
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(0.dp)) {
-            item{
+        Column(modifier = Modifier
+                .verticalScroll(rememberScrollState())) {
                 DetailPageCard()
-            }
-            item{
                 DetailOverview()
-            }
-            item{
-
                 Characters()
-            }
-            item{
                 TopBilled()
-            }
-            item{
                 LazyRow{
                     item{
                         TopBiledCastCard(
@@ -64,11 +56,7 @@ fun DetailPage(visible : MutableState<Boolean>){
 
                     }
                 }
-            }
-            item{
                 Social()
-            }
-            item {
                 Box(
                     modifier = Modifier
                         .height(40.dp)
@@ -76,17 +64,9 @@ fun DetailPage(visible : MutableState<Boolean>){
                 ) {
                     DetailTabs(reviews = reviews, discussions = discussions)
                 }
-            }
-            item{
                 Review()
-            }
-            item{
                 ReviewText()
-            }
-            item{
                 Recommmendations()
-            }
-            item{
                 LazyRow{
                     item{
                         RecommmendColumn(
@@ -101,12 +81,8 @@ fun DetailPage(visible : MutableState<Boolean>){
                         )
                     }
                 }
-            }
-            item{
                 Box(modifier = Modifier.height(80.dp))
-            }
 
         }
     }
-}
 }
