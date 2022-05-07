@@ -5,6 +5,7 @@ interface MovieRepository {
     fun getTopRated() : List<Movie>
     fun getNowPlaying() : List<Movie>
     fun getUpcoming() : List<Movie>
+
 }
 
 internal class MovieRepositoryImpl(

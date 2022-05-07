@@ -88,7 +88,7 @@ fun Characters(){
 
 @Composable
 fun Titles(name : String, function : String){
-    Box(modifier = Modifier
+    Column(modifier = Modifier
         .width(110.dp)
         .height(50.dp)){
         Text(
@@ -98,8 +98,7 @@ fun Titles(name : String, function : String){
         )
         Text(
             text = function,
-            fontSize = 17.sp,
-            modifier = Modifier.padding(top = 20.dp)
+            fontSize = 17.sp
         )
     }
 }

@@ -1,7 +1,7 @@
 package com.example.tmdb.modules
 
 class FavoriteMoviesBase {
-    var favoriteMovies:MutableList<Movie> = mutableListOf()
+    val favoriteMovies:MutableList<Movie> = mutableListOf()
 
     fun insert(movie: Movie){
         favoriteMovies.add(movie);
