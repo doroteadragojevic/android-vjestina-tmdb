@@ -1,27 +1,26 @@
 package com.example.tmdb.screens.detail
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.tmdb.R
+import coil.compose.rememberAsyncImagePainter
+import com.example.tmdb.modules.HomeViewModel
+import com.example.tmdb.modules.PresentableMovie
+import org.koin.androidx.compose.getViewModel
 
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
 fun DetailPage(visible : MutableState<Boolean>){
         val reviews = remember{ mutableStateOf(true)}
         val discussions = remember{ mutableStateOf(false)}
+    val homeViewModel : HomeViewModel  = getViewModel()
+    val detMovie : PresentableMovie? = homeViewModel.detailMovie
+    val cast by homeViewModel.getCast(detMovie!!.movie.id).collectAsState(initial = emptyList())
     Scaffold(topBar = {
         TopBar(visible = visible)
     }
@@ -34,30 +33,18 @@ fun DetailPage(visible : MutableState<Boolean>){
                 Characters()
                 TopBilled()
                 LazyRow{
-                    item{
-                        TopBiledCastCard(
-                            painter = painterResource(id = R.drawable.robert_d),
-                            name = "Robert Downey Jr.",
-                            character = "Tony Stark / Iron Man")
+                    items(cast.size){
+                        index ->
 
-                    }
-                    item{
-                        TopBiledCastCard(
-                            painter = painterResource(id = R.drawable.terrence_h),
-                            name = "Terrence Howard",
-                            character = "James Rhodes")
-
-                    }
-                    item{
-                        TopBiledCastCard(
-                            painter = painterResource(id = R.drawable.jeff_b),
-                            name = "Jeff Bridges",
-                            character = "Obadiah Stane / Iron Monger")
+                            TopBiledCastCard(
+                                painter = rememberAsyncImagePainter(model = cast[index].profilePath),
+                                name = cast[index].name, character = cast[index].character
+                            )
 
                     }
                 }
-                Social()
-                Box(
+                //Social()
+                /*Box(
                     modifier = Modifier
                         .height(40.dp)
                         .fillMaxWidth()
@@ -80,7 +67,7 @@ fun DetailPage(visible : MutableState<Boolean>){
                             painter = painterResource(id = R.drawable.captain_america)
                         )
                     }
-                }
+                }*/
                 Box(modifier = Modifier.height(80.dp))
 
         }

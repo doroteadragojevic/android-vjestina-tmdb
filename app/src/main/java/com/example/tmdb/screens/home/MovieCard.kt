@@ -19,17 +19,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.tmdb.R
 import com.example.tmdb.modules.FavoritesViewModel
+import com.example.tmdb.modules.HomeViewModel
 import com.example.tmdb.modules.Movie
+import com.example.tmdb.modules.PresentableMovie
+import org.koin.androidx.compose.getViewModel
 
 class MovieCard() {
     @Composable
     fun MovieCard(
         painter: Painter,
-        favorite: MutableState<Boolean>,
+        favorite: Boolean,
         visible : MutableState<Boolean>,
-        movie: Movie,
-        favoriteViewModel: FavoritesViewModel
+        movie: PresentableMovie,
+        onFavouriteClick : (movie: Movie) -> Unit
     ) {
+        val homeViewModel: HomeViewModel = getViewModel()
         Card(
             modifier = Modifier
                 .padding(3.dp)
@@ -38,6 +42,7 @@ class MovieCard() {
 
                 .clickable {
                     visible.value = false
+                    homeViewModel.detailMovie = movie
                 }
                 ,
             shape = RoundedCornerShape(15.dp),
@@ -52,19 +57,14 @@ class MovieCard() {
                         .fillMaxSize()
                         .padding(0.dp, 0.dp)
                 )
-                Box(modifier = if (!favorite.value) {
+                Box(modifier = if (!favorite) {
                     Modifier
                         .padding(5.dp)
                         .width(25.dp)
                         .background(Color.Gray.copy(0.3f), CircleShape)
                         .padding(3.dp)
                         .clickable {
-                            favorite.value = !favorite.value
-                            if(favorite.value){
-                                favoriteViewModel.favorites.insert(movie)
-                            } else {
-                                favoriteViewModel.favorites.delete(movie)
-                            }
+                            onFavouriteClick(movie.movie)
                         }
                 } else {
                     Modifier
@@ -73,12 +73,8 @@ class MovieCard() {
                         .background(Color.White.copy(0.7f), CircleShape)
                         .padding(3.dp)
                         .clickable {
-                            favorite.value = !favorite.value
-                            if(favorite.value){
-                                favoriteViewModel.favorites.insert(movie)
-                            } else {
-                                favoriteViewModel.favorites.delete(movie)
-                            }
+                            onFavouriteClick(movie.movie)
+
                         }
                 },
                     contentAlignment = Alignment.TopStart

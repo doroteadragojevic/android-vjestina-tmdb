@@ -50,8 +50,7 @@ fun TopBiledCastCard(painter : Painter, name: String, character : String){
         elevation = 5.dp
     ) {
         Box(modifier = Modifier
-            .height(230.dp)
-            .background(Color.Blue)) {
+            .height(230.dp)) {
             Image(
                 painter = painter,
                 contentDescription = "",

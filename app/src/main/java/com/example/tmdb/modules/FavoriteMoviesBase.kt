@@ -1,16 +1,16 @@
 package com.example.tmdb.modules
 
 class FavoriteMoviesBase {
-    val favoriteMovies:MutableList<Movie> = mutableListOf()
+    private val _favoriteMovies: MutableList<Movie> = mutableListOf()
+    val favoriteMovies: List<Movie>
+        get() = _favoriteMovies.toList()
 
-    fun insert(movie: Movie){
-        favoriteMovies.add(movie);
-        movie.favourite.value = true;
+    fun insert(movie: Movie) {
+        _favoriteMovies.add(movie)
     }
 
-    fun delete(movie: Movie){
-        favoriteMovies.remove(movie)
-        movie.favourite.value=false
+    fun delete(movie: Movie) {
+        _favoriteMovies.remove(movie)
     }
 
 

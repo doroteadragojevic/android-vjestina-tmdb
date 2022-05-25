@@ -1,7 +1,8 @@
-package com.example.tmdb
+package com.example.tmdb.screens.home
 
 
-
+import android.widget.ArrayAdapter
+import android.widget.ListAdapter
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -12,81 +13,107 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.tmdb.modules.FavoritesViewModel
-import com.example.tmdb.modules.HomeViewModel
+import coil.compose.rememberAsyncImagePainter
+import com.example.tmdb.R
+import com.example.tmdb.modules.*
 import com.example.tmdb.screens.detail.DetailPage
-import com.example.tmdb.screens.home.*
+import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun HomeScreen(logo : Painter,
-               modifier: Modifier = Modifier,
-               visible: MutableState<Boolean>,
-               homeViewModel: HomeViewModel,
-               favoritesViewModel: FavoritesViewModel
-               ){
+fun HomeScreen(
+    logo: Painter,
+    modifier: Modifier = Modifier,
+    visible: MutableState<Boolean>
+) {
 
-    val whatsPopularList = remember{ mutableStateOf(homeViewModel.popularList) }
-    val popularList = homeViewModel.popularList
-    val topRatedList = homeViewModel.topRatedList
-    val nowPlayingListMut = remember{ mutableStateOf(homeViewModel.nowPlayingList) }
-    val upcomingList = remember{ mutableStateOf(homeViewModel.upcoming) }
+    val homeViewModel: HomeViewModel = getViewModel()
 
-    val popular = remember{ mutableStateOf(true)}
-    val top_rated = remember{ mutableStateOf(false)}
-    val searching = remember{ mutableStateOf(false)}
-    val searchingCards = remember{ mutableStateOf(false)}
-if((visible.value == true) ) {
-    Scaffold(
 
-        topBar = { com.example.tmdb.screens.home.TopAppBar().TopBar(modifier, logo) }
+    val whatsPopularList: List<PresentableMovie> by homeViewModel.presentableWhatsPopular.collectAsState(
+        initial = emptyList()
+    )
+    val nowPlayingListMut: List<PresentableMovie> by homeViewModel.presentableNowPlaying.collectAsState(
+        initial = emptyList()
+    )
+    val upcomingList: List<PresentableMovie> by homeViewModel.presentableUpcoming.collectAsState(
+        initial = emptyList()
+    )
 
-    ) {
-        LazyColumn {
+    val searchList: List<Movie> by homeViewModel.searchList.collectAsState(initial = emptyList())
+    //val whatsPopularList: MutableState<List<Movie>?> = popularList
 
-            item {
-                Search(searching, searchingCards)
-            }
-            if((searching.value == false)) {
+    val popular = remember { mutableStateOf(true) }
+    val topRated = remember { mutableStateOf(false) }
+    val searching = remember { mutableStateOf(false) }
+    val searchingCards = remember { mutableStateOf(false) }
+
+
+    //val favoritesViewModel: FavoritesViewModel = getViewModel()
+    /*val favoriteMovies: List<Movie> by favoritesViewModel.favorites.collectAsState<List<Movie>, List<Movie>>(
+        initial = emptyList()
+    )*/
+
+
+
+    if (visible.value) {
+        Scaffold(
+
+            topBar = { TopAppBar().TopBar(modifier, logo) }
+
+        ) {
+            LazyColumn {
+
                 item {
-                    Cathegory(stringResource(id = R.string.home_first_cathegory))//str = "What's popular")
+                    Search(searching, searchingCards)
                 }
-                item {
-                    Box(
-                        modifier = Modifier
-                            .height(40.dp)
-                            .fillMaxWidth()
+                if (!searching.value) {
+                    item {
+                        Cathegory(stringResource(id = R.string.home_first_cathegory))//str = "What's popular")
+                    }
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .height(40.dp)
+                                .fillMaxWidth()
                         ) {
-                            Row() {
-                            //popular
+                            Row {
+                                //popular
                                 TextButton(onClick = {
-                                    popular.value = true;
-                                    top_rated.value = false;
-                                    whatsPopularList.value = popularList
+                                    homeViewModel.selectWhatsPopular(WhatsPopularType.POPULAR)
+
                                 }) {
-                                    Tabs().TextDisplayed(popular = popular, "Popular")
+                                    Tabs().TextDisplayed(popular = homeViewModel.isPopularTab,
+                                        "Popular")
 
                                 }
-                            //top_rated
+                                //top_rated
                                 TextButton(onClick = {
-                                    popular.value = false;
-                                    top_rated.value = true;
-                                    whatsPopularList.value = topRatedList
+                                    homeViewModel.selectWhatsPopular(WhatsPopularType.TOP_RATED)
+
                                 }) {
-                                    Tabs().TextDisplayed(popular = top_rated, "Top Rated")
+                                    Tabs().TextDisplayed(popular = homeViewModel.isTopRatedTab, "Top Rated")
                                 }
                             }
                         }
                     }
                     item {
                         LazyRow {
-                            items(4) { index ->
+                            items(whatsPopularList.size) { index ->
+                                val presentableMovie = whatsPopularList[index]
+                                val movie = presentableMovie.movie
                                 MovieCard().MovieCard(
-                                    painter = painterResource(id = whatsPopularList.value.get(index).painter),
-                                    whatsPopularList.value.get(index).favourite,
+
+                                    painter = rememberAsyncImagePainter(model = movie.imageUrl),
+                                    //it2.favourite,
+                                    favorite = presentableMovie.isFavorite,
                                     visible,
-                                    whatsPopularList.value.get(index),
-                                    favoritesViewModel
+                                    presentableMovie,
+                                    onFavouriteClick = {
+                                        homeViewModel.toggleFavorite(it)
+
+                                    }
                                 )
+
                             }
                         }
                     }
@@ -96,15 +123,22 @@ if((visible.value == true) ) {
                     }
                     item {
                         LazyRow {
-                            items(4) { index ->
+
+                            items(nowPlayingListMut.size) { index ->
+                                val presentableMovie = nowPlayingListMut[index]
+                                val movie = presentableMovie.movie
                                 MovieCard().MovieCard(
-                                    painterResource(id = nowPlayingListMut.value.get(index).painter),
-                                    nowPlayingListMut.value.get(index).favourite,
+
+                                    painter = rememberAsyncImagePainter(model = movie.imageUrl),
+                                    favorite = presentableMovie.isFavorite,
                                     visible,
-                                    nowPlayingListMut.value.get(index),
-                                    favoritesViewModel
+                                    presentableMovie,
+                                    onFavouriteClick = {
+                                        homeViewModel.toggleFavorite(it)
+                                    }
                                 )
                             }
+
                         }
                     }
                     item {
@@ -112,49 +146,67 @@ if((visible.value == true) ) {
                     }
                     item {
                         LazyRow {
-                            items(4) { index ->
+
+                            items(upcomingList.size) { index ->
+                                val presentableMovie = upcomingList[index]
+                                val movie = presentableMovie.movie
                                 MovieCard().MovieCard(
-                                    painter = painterResource(id = upcomingList.value.get(index).painter),
-                                    upcomingList.value.get(index).favourite,
+
+                                    painter = rememberAsyncImagePainter(model = movie.imageUrl),
+                                    //it2.favourite,
+                                    favorite = presentableMovie.isFavorite,
                                     visible,
-                                    upcomingList.value.get(index),
-                                    favoritesViewModel
+                                    presentableMovie,
+                                    onFavouriteClick = {
+                                        homeViewModel.toggleFavorite(it)
+                                    }
                                 )
                             }
+
                         }
                     }
                     item {
                         Box(modifier = Modifier.height(70.dp))
                     }
-                } else if(searchingCards.value == true){
-                    item {
+                } else if (searchingCards.value) {
+
+                    items(searchList.size){
+                        index ->
+                        SearchCard(
+                            painter = rememberAsyncImagePainter(model = searchList[index].imageUrl),
+                            name = searchList[index].title, visible
+                        )
+
+                    }
+                    /*item {
                         SearchCard(
                             painter = painterResource(id = R.drawable.iron_man),
-                            name = "Iron Man (2008)"
-                        , visible)
+                            name = "Iron Man (2008)", visible
+                        )
                     }
                     item {
                         SearchCard(
                             painter = painterResource(id = R.drawable.iron_man_2),
-                            name = "Iron Man 2 (2010)"
-                        , visible)
+                            name = "Iron Man 2 (2010)", visible
+                        )
                     }
                     item {
                         SearchCard(
                             painter = painterResource(id = R.drawable.iron_man_2),
-                            name = "Iron Man 3 (2013)"
-                        ,visible)
+                            name = "Iron Man 3 (2013)", visible
+                        )
                     }
-                    item{
-                       Box(modifier = Modifier.height(70.dp))
-                    }
-                }
-                else if(searching.value == true){
+                    item {
+                        Box(modifier = Modifier.height(70.dp))
+                    }*/
+                } else if (searching.value) {
 
                 }
             }
         }
-    } else if(visible.value == false){
+    } else if (!visible.value) {
         DetailPage(visible)
     }
 }
+
+

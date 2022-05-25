@@ -23,13 +23,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.example.tmdb.R
+import com.example.tmdb.modules.HomeViewModel
+import org.koin.androidx.compose.getViewModel
+import kotlin.math.roundToInt
 
 @Composable
 fun DetailPageCard(){
+    val homeViewModel: HomeViewModel = getViewModel()
     Card(shape = RoundedCornerShape(0.dp)) {
         Image(
-            painter = painterResource(id = R.drawable.iron_man),
+            painter = rememberAsyncImagePainter(model = homeViewModel.detailMovie?.movie?.imageUrl),
             contentDescription = "",
             modifier = Modifier
                 .height(400.dp)
@@ -56,34 +61,27 @@ fun DetailPageCard(){
 
             UserScore()
 
-            Text(
-                text = "Iron Man (2008)",
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                fontSize = 25.sp,
-                modifier = Modifier.padding(top = 63.dp)
+            homeViewModel.detailMovie?.let {
+                Text(
+                    text = it.movie.title,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 25.sp,
+                    modifier = Modifier.padding(top = 83.dp)
 
-            )
+                )
+            }
             Box(modifier = Modifier
-                .padding(top = 100.dp)
+                .padding(top = 120.dp)
                 .height(40.dp)
                 .fillMaxWidth()
             ){
-                Text(
-                    text = "05/02/2008 (US)",
-                    color = Color.White
-                )
-                Text(
-                    text = "Action, Science Fiction, Adventure",
-                    color = Color.White,
-                    modifier = Modifier.padding(top = 13.dp))
-                Text(
-                    text = "2h 6m",
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    modifier = Modifier
-                        .padding(top = 13.dp, start = 220.dp)
-                )
+                homeViewModel.detailMovie?.movie?.releaseDate?.let {
+                    Text(
+                        text = it,
+                        color = Color.White
+                    )
+                }
             }
             IconsBox()
         }
@@ -93,6 +91,7 @@ fun DetailPageCard(){
 
 @Composable
 fun UserScore(){
+    val homeViewModel : HomeViewModel = getViewModel()
         Card(
             backgroundColor = Color.Transparent
         ) {
@@ -106,7 +105,7 @@ fun UserScore(){
             )
 
             Text(
-                text = "76%",
+                text = (homeViewModel.detailMovie?.movie?.vote_average?.times(10)?.roundToInt()).toString() + "%",
                 color = Color.White,
                 modifier = Modifier
                     .padding(15.dp)
@@ -118,7 +117,7 @@ fun UserScore(){
             text = "User Score",
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .padding(0.dp, 45.dp),
+                .padding(0.dp, 65.dp),
             color = Color.White,
             fontSize = 17.sp
         )
@@ -132,25 +131,26 @@ fun IconsBox(){
         .fillMaxWidth()
     ){
         Row{
-            PictureIcons(painter = painterResource(id = R.drawable.options))
+
             PictureIcons(painter = painterResource(id = R.drawable.favorite))
-            PictureIcons(painter = painterResource(id = R.drawable.mark))
-            PictureIcons(painter = painterResource(id = R.drawable.star))
         }
     }
 }
 
 @Composable
 fun PictureIcons(painter : Painter){
-    val favorite = remember{ mutableStateOf(false) }
-    Box(modifier = if (!favorite.value) {
+    val homeViewModel : HomeViewModel = getViewModel()
+    val favorite = homeViewModel.detailMovie?.isFavorite
+    Box(modifier = if (!favorite!!) {
         Modifier
             .padding(10.dp, 8.dp)
             .width(30.dp)
             .height(30.dp)
             .background(Color(0xFF757575).copy(0.8f), CircleShape)
             .padding(3.dp)
-            .clickable { favorite.value = !favorite.value }
+            .clickable {
+                homeViewModel.detailMovie?.let { homeViewModel.toggleFavorite(it.movie) }
+            }
     } else {
         Modifier
             .padding(10.dp, 8.dp)
@@ -158,7 +158,7 @@ fun PictureIcons(painter : Painter){
             .height(30.dp)
             .background(Color.White.copy(0.7f), CircleShape)
             .padding(3.dp)
-            .clickable { favorite.value = !favorite.value }
+            .clickable { homeViewModel.detailMovie?.let { homeViewModel.toggleFavorite(it.movie) } }
     },
         contentAlignment = Alignment.Center
     ) {

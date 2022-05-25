@@ -18,16 +18,12 @@ import com.example.tmdb.modules.HomeViewModel
 import com.example.tmdb.screens.main.BottomBarScreen
 
 @Composable
-fun MainScreen(homeViewModel: HomeViewModel,
-               favoritesViewModel: FavoritesViewModel
-) {
+fun MainScreen() {
     val navController = rememberNavController()
     Scaffold(bottomBar = {
         BottomBar(navController = navController)
     }) {
         BottomNavGraph(
-            homeViewModel,
-            favoritesViewModel,
             navController = navController
             )
     }

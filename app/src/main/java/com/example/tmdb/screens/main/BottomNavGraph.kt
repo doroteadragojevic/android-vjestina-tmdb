@@ -1,5 +1,6 @@
 package com.example.tmdb
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
@@ -10,13 +11,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.tmdb.modules.FavoritesViewModel
-import com.example.tmdb.modules.HomeViewModel
+import com.example.tmdb.screens.home.HomeScreen
 import com.example.tmdb.screens.main.BottomBarScreen
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
-fun BottomNavGraph(homeViewModel: HomeViewModel,
-                   favoritesViewModel: FavoritesViewModel,
+fun BottomNavGraph(
                    navController: NavHostController
                    ){
     NavHost(navController = navController,
@@ -27,9 +27,7 @@ fun BottomNavGraph(homeViewModel: HomeViewModel,
                 Modifier
                     .offset(0.dp, 0.dp)
                     .height(45.dp),
-                visible = mutableStateOf(true),
-                homeViewModel,
-                favoritesViewModel
+                visible = mutableStateOf(true)
                 )
         }
         composable(route = BottomBarScreen.Favorites.route){
@@ -37,8 +35,7 @@ fun BottomNavGraph(homeViewModel: HomeViewModel,
                 Modifier
                     .offset(0.dp, 0.dp)
                     .height(45.dp),
-                visible = mutableStateOf(true),
-                favoritesViewModel
+                visible = mutableStateOf(true)
             )
         }
     }
